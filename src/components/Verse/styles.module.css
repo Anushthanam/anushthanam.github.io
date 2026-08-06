@@ -1,0 +1,61 @@
+.verse {
+  background: var(--ifm-card-background-color, #fffaf0);
+  border: 1px solid var(--anush-line, #e3d5b8);
+  border-left: 4px solid var(--anush-accent-soft, #c98a4b);
+  border-radius: 12px;
+  padding: 1.25rem 1.5rem;
+  margin: 1.5rem 0;
+  box-shadow: 0 1px 3px rgba(70, 50, 20, 0.06), 0 6px 18px rgba(70, 50, 20, 0.05);
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+.verse:hover {
+  box-shadow: 0 2px 6px rgba(70, 50, 20, 0.1), 0 10px 26px rgba(70, 50, 20, 0.08);
+}
+
+.linepair {
+  padding: 0.7rem 0;
+  border-bottom: 1px dashed var(--anush-line, #e3d5b8);
+}
+.linepair:first-child {
+  padding-top: 0.15rem;
+}
+.linepair:last-child {
+  border-bottom: none;
+  padding-bottom: 0.15rem;
+}
+
+.te {
+  font-family: var(--anush-telugu-font);
+  font-size: 1.5rem;
+  line-height: 2;
+  color: var(--anush-ink, #2e2620);
+  letter-spacing: 0.015em;
+  font-weight: 500;
+}
+
+.en {
+  font-size: 1.02rem;
+  line-height: 1.65;
+  font-style: italic;
+  color: var(--anush-english, #6a5a42);
+  margin-top: 0.35rem;
+  letter-spacing: 0.008em;
+}
+
+.meaning {
+  margin: 1.2rem 0;
+  background: var(--anush-bg-soft, #efe3c9);
+  border-left: 4px solid var(--anush-accent-soft, #c98a4b);
+  border-radius: 6px;
+  padding: 0.9rem 1.1rem;
+  line-height: 1.65;
+}
+.meaningLabel {
+  display: block;
+  color: var(--anush-accent, #a8451f);
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-bottom: 0.35rem;
+  font-weight: 700;
+}

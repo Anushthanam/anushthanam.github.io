@@ -1,0 +1,28 @@
+{
+  "name": "అనుష్ఠానం · Anushthanam",
+  "short_name": "Anushthanam",
+  "description": "Daily Hindu Anushtanam — stotras, suktas & vratas in Telugu with IAST transliteration. Works offline.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#ffffff",
+  "theme_color": "#b8860b",
+  "lang": "te",
+  "dir": "ltr",
+  "categories": ["books", "education", "lifestyle"],
+  "icons": [
+    {
+      "src": "/img/logo.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/img/logo.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ]
+}

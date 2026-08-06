@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200" role="img" aria-label="Om — Anushthanam">
+  <defs>
+    <radialGradient id="halo" cx="50%" cy="50%" r="55%">
+      <stop offset="0%" stop-color="#fff4d6" stop-opacity="1"/>
+      <stop offset="55%" stop-color="#f7c56b" stop-opacity="0.55"/>
+      <stop offset="100%" stop-color="#b8860b" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <circle cx="100" cy="100" r="96" fill="url(#halo)"/>
+  <circle cx="100" cy="100" r="94" fill="none" stroke="#b8860b" stroke-width="3"/>
+  <text x="100" y="140"
+        text-anchor="middle"
+        font-family="Noto Sans Devanagari, Sanskrit Text, Mangal, serif"
+        font-size="140"
+        font-weight="700"
+        fill="#8b5a00">ॐ</text>
+</svg>

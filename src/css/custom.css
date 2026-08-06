@@ -1,0 +1,103 @@
+/* Anushtanam — global theme (warm paper + Telugu typography) */
+
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+Telugu:wght@400;600;700&family=Noto+Serif:ital@0;1&display=swap');
+
+:root {
+  /* Brand: kumkum red + sandal */
+  --ifm-color-primary: #a8451f;
+  --ifm-color-primary-dark: #973e1c;
+  --ifm-color-primary-darker: #8e3a1a;
+  --ifm-color-primary-darkest: #753015;
+  --ifm-color-primary-light: #b94c22;
+  --ifm-color-primary-lighter: #c25327;
+  --ifm-color-primary-lightest: #d16b3f;
+
+  --ifm-code-font-size: 95%;
+  --ifm-font-family-base: 'Noto Serif', Georgia, 'Times New Roman', serif;
+  --ifm-background-color: #f7efdd;
+  --ifm-card-background-color: #fffaf0;
+
+  /* Anushtanam custom tokens (used by components) */
+  --anush-telugu-font: 'Noto Serif Telugu', 'Gautami', serif;
+  --anush-ink: #2e2620;
+  --anush-english: #6a5a42;
+  --anush-accent: #a8451f;
+  --anush-accent-soft: #c98a4b;
+  --anush-line: #e3d5b8;
+  --anush-bg-soft: #efe3c9;
+
+  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.1);
+}
+
+[data-theme='dark'] {
+  --ifm-color-primary: #e8965c;
+  --ifm-color-primary-dark: #e4823f;
+  --ifm-color-primary-darker: #e17930;
+  --ifm-color-primary-darkest: #c56220;
+  --ifm-color-primary-light: #ecaa79;
+  --ifm-color-primary-lighter: #efb388;
+  --ifm-color-primary-lightest: #f4cbad;
+
+  --ifm-background-color: #14110d;
+  --ifm-card-background-color: #211c15;
+
+  --anush-ink: #efe6d4;
+  --anush-english: #c9b990;
+  --anush-accent: #e8965c;
+  --anush-accent-soft: #d9b877;
+  --anush-line: #33291d;
+  --anush-bg-soft: #1c1813;
+
+  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
+}
+
+/* Telugu headings render in the Telugu serif for a book-like feel */
+.markdown h1,
+.markdown h2,
+.markdown h3,
+.navbar__title,
+.menu__link {
+  font-family: var(--anush-telugu-font);
+}
+
+/* Comfortable reading measure for tablet portrait */
+.markdown {
+  max-width: 46rem;
+}
+
+
+/* ----------------------------------------------------------------------- *
+ * Tablet reading ergonomics (Android — Lenovo M11 and similar).
+ *
+ * Prevents accidental "scroll to top" behaviour that interrupts reading long
+ * ritual pages (like the 444-count Tarpaṇa):
+ *   1. overscroll-behavior-y: contain — kills the browser's pull-to-refresh
+ *      gesture when swiping down at the top of the page.
+ *   2. overscroll-behavior-x: contain — prevents horizontal swipe from
+ *      triggering "back navigation" on some Android browsers.
+ *   3. scroll-behavior: auto — disables smooth-scrolling on anchor clicks so
+ *      an accidental tap on a heading link doesn't smoothly whoosh to the top.
+ *   4. scroll-padding-top — offsets in-page anchor jumps below the sticky
+ *      navbar (no visual "back to top" flash).
+ *   5. Hides the Docusaurus "back to top" floating button, which is easy to
+ *      tap by accident on a tablet held in one hand.
+ * ----------------------------------------------------------------------- */
+html, body {
+  overscroll-behavior: contain;
+  scroll-behavior: auto;
+  scroll-padding-top: calc(var(--ifm-navbar-height, 60px) + 12px);
+}
+
+/* Kill the floating "scroll to top" button entirely — it's a common
+   accidental-tap source on tablets held in reading position. */
+.theme-back-to-top-button,
+button[class*="backToTopButton"] {
+  display: none !important;
+}
+
+/* Prevent the whole page from re-flowing to the top when opening/closing a
+   <details> block (Chromium sometimes scrolls when the summary receives
+   focus). Anchor the scroll to the summary itself. */
+details > summary {
+  scroll-margin-top: calc(var(--ifm-navbar-height, 60px) + 12px);
+}
