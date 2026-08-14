@@ -217,7 +217,7 @@ import { FAMILY_TE, FAMILY_IAST } from './sankalpam-family';
  * @param {Date}   instant
  * @param {object} [opts]
  * @param {boolean} [opts.includeFamily] - if true, inject the personalized
- *                    Gaṇḍikōṭa family bloc (see sankalpam-family.js) instead
+ *                    generic Kāśyapa family bloc (see sankalpam-family.js) instead
  *                    of the two generic `asmākaṃ sakuṭumbānāṃ …` +
  *                    `dharmārtha …` lines.
  * @param {string}  [opts.closingTe]   - override the final `sandhyām upāśiṣye`

@@ -187,7 +187,142 @@
   flex: 1 1 180px;
   accent-color: var(--anush-accent, #a8451f);
 }
+/* Manual mode: hero mantram — bigger, warmer, highlighted */
+.heroMantram {
+  padding: 0.9rem 1.1rem;
+  margin: 0.4rem 0;
+  border-left: 5px solid var(--anush-accent, #a8451f);
+  background: var(--anush-bg-soft, #efe3c9);
+  border-radius: 10px;
+}
+.fsOverlay .heroMantram .mte {
+  font-size: clamp(1.5rem, 3.6vw, 2.6rem);
+  line-height: 1.35;
+  font-weight: 600;
+  color: var(--anush-ink, #2e2620);
+  margin: 0;
+}
+.fsOverlay .heroMantram .men {
+  font-size: clamp(0.9rem, 1.4vw, 1.15rem);
+  line-height: 1.35;
+  color: var(--anush-english, #6a5a42);
+  margin-top: 0.25rem;
+}
+
+
+.readCount {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  padding: 1.5rem 1rem;
+  margin: 0.5rem 0 1rem;
+  background: var(--anush-bg-soft, #efe3c9);
+  border: 2px solid var(--anush-accent, #a8451f);
+  border-radius: 14px;
+  color: var(--anush-accent, #a8451f);
+}
+.readCountBig {
+  font-size: clamp(3.5rem, 10vw, 6rem);
+  font-weight: 800;
+  line-height: 1;
+}
+.readCountLabel {
+  font-size: clamp(1rem, 2.5vw, 1.5rem);
+  font-weight: 700;
+  letter-spacing: 0.03em;
+}
+
 .speedHint {
   font-size: 0.78rem;
   color: var(--anush-english, #8a7a5c);
 }
+.fsOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: var(--ifm-background-color, #fffaf0);
+  display: flex;
+  flex-direction: column;
+  padding: 1rem clamp(1rem, 3vw, 2rem);
+  overflow: auto;
+  animation: fsFade 0.15s ease-out;
+}
+@keyframes fsFade {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+.fsClose {
+  position: absolute;
+  top: 0.6rem;
+  right: 0.6rem;
+  z-index: 10;
+  appearance: none;
+  border: 1px solid var(--anush-line, #e3d5b8);
+  background: var(--ifm-background-color, #fff);
+  color: var(--anush-ink, #2e2620);
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  font-size: 1.4rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(70, 50, 20, 0.15);
+}
+.fsClose:active { transform: scale(0.94); }
+
+/* In fullscreen, scale mantram text way up for distance reading */
+.fsOverlay .mantram {
+  padding: 2rem 2.2rem;
+  margin: 4rem 0 1.5rem;
+}
+.fsOverlay .mte {
+  font-size: clamp(2rem, 5.5vw, 3.8rem);
+  line-height: 1.6;
+}
+.fsOverlay .men {
+  font-size: clamp(1.05rem, 2.2vw, 1.6rem);
+  line-height: 1.5;
+}
+.fsOverlay .box {
+  width: 3rem;
+  height: 3rem;
+  font-size: 1.15rem;
+}
+.fsOverlay .progressText { font-size: 1.05rem; }
+.fsOverlay .title { font-size: 1.6rem; }
+.fsOverlay .sub  { font-size: 1.05rem; }
+
+/* Manual tap surface — covers most of the screen but not the header/close */
+.tapSurface {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  padding: 1rem;
+}
+.tapHintBig {
+  margin-top: 1.5rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--anush-accent, #a8451f);
+  text-align: center;
+  letter-spacing: 0.02em;
+  opacity: 0.75;
+}
+.voiceRow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+  color: var(--anush-english, #6a5a42);
+}
+
