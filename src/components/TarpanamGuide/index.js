@@ -144,6 +144,24 @@ function TarpanamGuideImpl() {
 
   const current = withLeadIn(steps[pos.step] || steps[0]);
   const moolaRef = withLeadIn(steps[0]);
+  // For the Manual overview screen: all bīja "seeds" (just the quoted syllable
+  // like "ఓం", "శ్రీం", "హ్రీం") in recitation order. Extract the substring
+  // between the smart quotes “…” (or straight "…") from each bīja step.
+  const bijaLines = useMemo(() => {
+    const rx = /[“"]([^”"]+)[”"]/;
+    return steps
+      .map((s, i) => ({ s, i }))
+      .filter(({ s, i }) => i > 0 && !s.te.includes('గణపతయే'))
+      .map(({ s }, k) => {
+        const mTe = s.te.match(rx);
+        const mEn = s.en.match(rx);
+        return {
+          n: k + 1,
+          te: mTe ? mTe[1] : s.te,
+          en: mEn ? mEn[1] : s.en,
+        };
+      });
+  }, [steps]);
   const doneBefore = pos.step > 0 ? steps[pos.step - 1].cumulative : 0;
   const overall = doneBefore + pos.beat;
   // Bīja-akṣara lines pace at half the moola interval.
@@ -223,6 +241,45 @@ function TarpanamGuideImpl() {
   // --- Manual mode: play a matching MP3 (step-NN.mp3) once when the mantram
   // becomes current. Silently no-ops if the file doesn't exist.
   const audioElRef = useRef(null);
+
+  // Manual overview: auto-fit content to viewport by scaling text so nothing
+  // scrolls off screen. Measured after mount and on resize.
+  const manualOverviewRef = useRef(null);
+  const seedContentRef = useRef(null);
+  useEffect(() => {
+    if (phase !== 'manual') return undefined;
+    const wrap = manualOverviewRef.current;
+    const content = seedContentRef.current;
+    if (!wrap || !content) return undefined;
+
+    let raf = 0;
+    const fit = () => {
+      // Reset scale to measure natural size.
+      wrap.style.setProperty('--seed-scale', '1');
+      // Give the browser a frame to reflow.
+      const available = wrap.clientHeight - content.offsetTop;
+      const needed = content.scrollHeight;
+      if (needed <= 0 || available <= 0) return;
+      const ratio = available / needed;
+      // Floor at 0.55 so text stays legible even on tiny viewports.
+      const scale = Math.max(0.55, Math.min(1, ratio * 0.98));
+      wrap.style.setProperty('--seed-scale', String(scale));
+    };
+    const schedule = () => {
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(fit);
+    };
+    schedule();
+    const ro = new ResizeObserver(schedule);
+    ro.observe(wrap);
+    window.addEventListener('resize', schedule);
+    return () => {
+      cancelAnimationFrame(raf);
+      ro.disconnect();
+      window.removeEventListener('resize', schedule);
+    };
+  }, [phase, bijaLines.length, fullscreen]);
+
   useEffect(() => {
     if (phase !== 'manual' || !audioOn) return undefined;
     if (spokenStepRef.current === pos.step) return undefined;
@@ -391,20 +448,21 @@ function TarpanamGuideImpl() {
 
   const content = (
     <div className={styles.guide}>
-      <div className={styles.header}>
-        <div className={styles.title}>
-          మార్గదర్శక తర్పణం · Guided Tarpaṇa Pacer
+      {phase !== 'manual' && (
+        <div className={styles.header}>
+          <div className={styles.title}>
+            మార్గదర్శక తర్పణం · Guided Tarpaṇa Pacer
+          </div>
+          <div className={styles.sub}>
+            {phase === 'idle' && '“Set Pace” — నొక్కుడు లయ నేర్చుకొని స్వయంచాలకంగా 444 సార్లు నడుస్తుంది · learns your tempo and auto-runs hands-free. “Manual” — ఒక్కసారి తట్టితే ఒక లెక్క, ప్రతి కొత్త మంత్రం స్వరపెట్టబడుతుంది · one tap per count, each new (bīja) mantram is voiced.'}
+            {phase === 'calibrating' && `లయ అభ్యాసం — మీ మూలమంత్ర వేగంలో ${LEARN_TAPS} సార్లు నొక్కండి · Tap ${LEARN_TAPS} times at your moola-mantra pace  (${calTaps}/${LEARN_TAPS})`}
+            {phase === 'ready' && `✅ లయ సిద్ధం · Pace set — moola ${secs}s, bīja ${(intervalMs / 2000).toFixed(2)}s per count. టాబ్లెట్‌ను సరిచేసి Play నొక్కండి · Position the tablet and press Play — it runs to 444 without touching the screen.`}
+            {phase === 'auto' && `స్వయంచాలకం · Auto-pacing — ${current.moola ? `moola ${secs}s` : `bīja ${bijaSecs}s`} / count`}
+            {phase === 'paused' && '⏸ నిలిపివేయబడింది — Play నొక్కితే అదే చోటు నుండి కొనసాగుతుంది · Paused — resumes from the same count'}
+            {phase === 'done' && '🙏 పూర్తయింది · Completed all 444 counts'}
+          </div>
         </div>
-        <div className={styles.sub}>
-          {phase === 'idle' && '“Set Pace” — నొక్కుడు లయ నేర్చుకొని స్వయంచాలకంగా 444 సార్లు నడుస్తుంది · learns your tempo and auto-runs hands-free. “Manual” — ఒక్కసారి తట్టితే ఒక లెక్క, ప్రతి కొత్త మంత్రం స్వరపెట్టబడుతుంది · one tap per count, each new (bīja) mantram is voiced.'}
-          {phase === 'calibrating' && `లయ అభ్యాసం — మీ మూలమంత్ర వేగంలో ${LEARN_TAPS} సార్లు నొక్కండి · Tap ${LEARN_TAPS} times at your moola-mantra pace  (${calTaps}/${LEARN_TAPS})`}
-          {phase === 'ready' && `✅ లయ సిద్ధం · Pace set — moola ${secs}s, bīja ${(intervalMs / 2000).toFixed(2)}s per count. టాబ్లెట్‌ను సరిచేసి Play నొక్కండి · Position the tablet and press Play — it runs to 444 without touching the screen.`}
-          {phase === 'auto' && `స్వయంచాలకం · Auto-pacing — ${current.moola ? `moola ${secs}s` : `bīja ${bijaSecs}s`} / count`}
-          {phase === 'paused' && '⏸ నిలిపివేయబడింది — Play నొక్కితే అదే చోటు నుండి కొనసాగుతుంది · Paused — resumes from the same count'}
-          {phase === 'manual' && '👆 స్క్రీన్‌పై చేతితో ఒక్కసారి తట్టండి = ఒక లెక్క · Tap the screen once with your hand = one count. (నీటి బిందువులు తిరస్కరించబడతాయి · water drops are rejected.)'}
-          {phase === 'done' && '🙏 పూర్తయింది · Completed all 444 counts'}
-        </div>
-      </div>
+      )}
 
       {/* Calibration cycle — practice taps only */}
       {phase === 'calibrating' && (
@@ -432,53 +490,32 @@ function TarpanamGuideImpl() {
         </>
       )}
 
-      {/* Manual mode — bundle view: bīja + moola stacked, hero text, tap anywhere */}
-      {showManual && bundles[bundleIdx] && (
-        <div
-          className={styles.tapSurface}
-          onPointerDown={onTapDown}
-          onPointerUp={onTapUp}
-          onPointerCancel={() => { gestureRef.current.down = 0; }}
-          role="button"
-          aria-label="Tap to advance to the next mantram bundle"
-          tabIndex={0}
-          onKeyDown={(e) => { if (e.code === 'Space' || e.code === 'Enter') { e.preventDefault(); stepJumpMantram(); } }}
-        >
-          <div style={{ width: '100%' }}>
-            {bundles[bundleIdx].lines.map((line, i) => {
-              const w = withLeadIn(line);
-              return (
-                <div key={i} className={`${styles.mantram} ${styles.heroMantram}`}>
-                  <div className={styles.mte} lang="te">{w.te}</div>
-                  <div className={styles.men}>{w.en}</div>
+      {/* Manual mode — full overview: moola on top, compact bīja seed grid */}
+      {showManual && (
+        <div ref={manualOverviewRef} className={styles.manualOverview}>
+          <div className={`${styles.mantram} ${styles.heroMantram} ${styles.moolaCard}`}>
+            <div className={styles.moolaBadge}>మూలమంత్రం · Moola · × 12 (first), × 4 (each cycle)</div>
+            <div className={styles.mte} lang="te">{moolaRef.te}</div>
+          </div>
+
+          <div ref={seedContentRef}>
+            <div className={styles.seedGrid}>
+              {bijaLines.slice(0, 28).map((b) => (
+                <div key={b.n} className={styles.seedItem}>
+                  <span className={styles.seedNum}>{b.n}.</span>
+                  <span className={styles.seedTe} lang="te">{b.te}</span>
+                  <span className={styles.seedEn}>({b.en})</span>
                 </div>
-              );
-            })}
-
-            <div className={styles.progress}>
-              <div className={styles.progressBar}>
-                <div
-                  className={styles.progressFill}
-                  style={{ width: `${((bundleIdx + 1) / bundles.length) * 100}%` }}
-                />
-              </div>
-              <div className={styles.progressText}>
-                {bundleIdx + 1} / {bundles.length}
-              </div>
+              ))}
             </div>
-
-            <div className={styles.tapHintBig}>👆 తట్టండి · TAP for next</div>
-
-            <div className={styles.voiceRow}>
-              <button
-                type="button"
-                className={`${styles.btn} ${audioOn ? styles.on : ''}`}
-                onClick={(e) => { e.stopPropagation(); setAudioOn((v) => !v); }}
-                onPointerDown={(e) => e.stopPropagation()}
-                onPointerUp={(e) => e.stopPropagation()}
-              >
-                {audioOn ? '🔊 ఆడియో · Audio ON' : '🔇 ఆడియో · Audio OFF'}
-              </button>
+            <div className={`${styles.seedGrid} ${styles.seedGridWide}`}>
+              {bijaLines.slice(28).map((b) => (
+                <div key={b.n} className={styles.seedItem}>
+                  <span className={styles.seedNum}>{b.n}.</span>
+                  <span className={styles.seedTe} lang="te">{b.te}</span>
+                  <span className={styles.seedEn}>({b.en})</span>
+                </div>
+              ))}
             </div>
           </div>
         </div>
@@ -526,15 +563,6 @@ function TarpanamGuideImpl() {
             <button className={styles.btn} onClick={() => startManual(0)}>
               👆 Manual
             </button>
-            {resumeStep > 0 && (
-              <button
-                className={`${styles.btn} ${styles.primary}`}
-                onClick={() => startManual(resumeStep)}
-                title="Continue from where you stopped"
-              >
-                ⏵ Resume · మంత్రం {resumeStep + 1}/{steps.length}
-              </button>
-            )}
           </>
         )}
 
@@ -559,17 +587,10 @@ function TarpanamGuideImpl() {
           <>
             <button
               className={styles.btn}
-              onClick={(e) => { e.stopPropagation(); setBundleIdx((i) => Math.max(0, i - 1)); }}
+              onClick={(e) => { e.stopPropagation(); closeFullscreen && closeFullscreen(); setPhase('idle'); }}
               onPointerDown={(e) => e.stopPropagation()}
               onPointerUp={(e) => e.stopPropagation()}
-              disabled={bundleIdx === 0}
             >⬅ Back</button>
-            <button
-              className={styles.btn}
-              onClick={(e) => { e.stopPropagation(); startManual(0); }}
-              onPointerDown={(e) => e.stopPropagation()}
-              onPointerUp={(e) => e.stopPropagation()}
-            >↺ Restart from 1</button>
           </>
         )}
 
